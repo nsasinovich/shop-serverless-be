@@ -11,7 +11,7 @@ module.exports = {
   externals: [nodeExternals()],
   resolve: {
     extensions: ['.ts', '.js'],
-    plugins: [new TsconfigPathsPlugin()]
+    plugins: [new TsconfigPathsPlugin()],
   },
   module: {
     rules: [
@@ -20,5 +20,5 @@ module.exports = {
         loader: 'ts-loader',
       },
     ],
-  }
+  },
 };
