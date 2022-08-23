@@ -1,1 +1,1 @@
-export { getProductsList, getProductById } from '@functions';
+export { getProductsList, getProductById } from '@/functions';

@@ -3,10 +3,7 @@
     "baseUrl": ".",
     "resolveJsonModule": true,
     "paths": {
-      "@functions": ["src/functions"],
-      "@functions/*": ["src/functions/*"],
-      "@mocks/*": ["src/mocks/*"],
-      "@consts/*": ["src/consts/*"]
+      "@/*": ["src/*"]
     }
   }
 }

@@ -1,7 +1,8 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { getProductsListMock } from '@mocks/getProductsListMock';
 import { Product } from 'src/types/products';
-import { headers } from '@consts/headers';
+import { StatusCode } from '@/consts/statusCode';
+import { HttpResponse } from '@/utils/httpResponse';
+import { getProductsListMock } from '@/mocks/getProductsListMock';
 
 export const getProductsList = async (event): Promise<APIGatewayProxyResult> => {
   console.log('Lambda invocation with event: ', JSON.stringify(event));
@@ -10,18 +11,10 @@ export const getProductsList = async (event): Promise<APIGatewayProxyResult> => 
 
     console.log('Products received: ', JSON.stringify(products));
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(products),
-    };
+    return HttpResponse.createSuccessResponse(products);
   } catch (e) {
     console.log('An error occured while loading products', e);
 
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ message: 'Something went wrong' }),
-    };
+    return HttpResponse.createErrorResponse(StatusCode.ServerError, 'Something went wrong');
   }
 };

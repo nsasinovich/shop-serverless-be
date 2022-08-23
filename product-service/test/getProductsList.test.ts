@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { getProductsList } from '@functions/getProductsList';
-import productsListMock from '@mocks/productsListMock';
+import { getProductsList } from '@/functions/getProductsList';
+import productsListMock from '@/mocks/productsListMock';
 
 describe('#getProductsList', () => {
   const mockEvent = {} as APIGatewayProxyEvent;
