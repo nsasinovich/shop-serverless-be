@@ -1,10 +1,8 @@
-import { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
-import { getProductsListMock } from 'src/mocks/getProductsListMock';
+import { APIGatewayProxyResult } from 'aws-lambda';
+import { getProductsListMock } from '@mocks/getProductsListMock';
 import { Product } from 'src/types/products';
 
-export const getProductsList: APIGatewayProxyHandler = async (
-  event
-): Promise<APIGatewayProxyResult> => {
+export const getProductsList = async (event): Promise<APIGatewayProxyResult> => {
   console.log('Lambda invocation with event: ', JSON.stringify(event));
   try {
     const products: Product[] = await getProductsListMock();
