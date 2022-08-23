@@ -14,9 +14,13 @@ provider:
   profile: personalAccount
 
 plugins:
+  - serverless-auto-swagger
   - serverless-webpack
 
 custom:
+  autoswagger:
+    typefiles: ['./src/types/products.d.ts']
+    apiType: 'http'
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -36,4 +40,3 @@ functions:
           path: /products/{productId}
           method: get
           cors: true
-
