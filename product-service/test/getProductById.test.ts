@@ -20,6 +20,11 @@ describe('#getProductById', () => {
         imageUrl:
           'https://www.tradeinn.com/f/13860/138604965/powerslide-next-grey-100-banan-marakuja.jpg',
       }),
+      headers: {
+        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Origin': '*',
+      },
       statusCode: 200,
     });
   });

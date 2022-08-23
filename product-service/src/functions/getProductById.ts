@@ -1,5 +1,6 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { getProductsListMock } from '@mocks/getProductsListMock';
+import { headers } from '@consts/headers';
 
 export const getProductById = async (event): Promise<APIGatewayProxyResult> => {
   console.log('Lambda invocation with event: ', JSON.stringify(event));
@@ -9,6 +10,7 @@ export const getProductById = async (event): Promise<APIGatewayProxyResult> => {
   if (!productId) {
     return {
       statusCode: 400,
+      headers,
       body: JSON.stringify({ message: 'productId is not valid' }),
     };
   }
@@ -19,17 +21,20 @@ export const getProductById = async (event): Promise<APIGatewayProxyResult> => {
     if (!product) {
       return {
         statusCode: 404,
+        headers,
         body: JSON.stringify({ message: 'Product not found' }),
       };
     }
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify(product),
     };
   } catch (e) {
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ message: 'Something went wrong' }),
     };
   }

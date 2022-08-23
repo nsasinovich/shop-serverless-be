@@ -5,7 +5,8 @@
     "paths": {
       "@functions": ["src/functions"],
       "@functions/*": ["src/functions/*"],
-      "@mocks/*": ["src/mocks/*"]
+      "@mocks/*": ["src/mocks/*"],
+      "@consts/*": ["src/consts/*"]
     }
   }
 }
