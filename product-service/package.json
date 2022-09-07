@@ -8,7 +8,8 @@
     "deploy:dev": "sls deploy --stage dev",
     "deploy:prod": "sls deploy --stage prod",
     "remove:dev": "sls remove --stage dev",
-    "remove:prod": "sls remove --stage prod"
+    "remove:prod": "sls remove --stage prod",
+    "lint": "eslint --ext .ts . --ignore-path .gitignore --max-warnings 0 --fix"
   },
   "engines": {
     "node": ">=14.15.0"
@@ -18,7 +19,13 @@
     "@types/aws-lambda": "^8.10.71",
     "@types/jest": "^28.1.7",
     "@types/node": "^14.14.25",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "jest": "^28.1.3",
+    "prettier": "^2.7.1",
     "serverless": "^3.0.0",
     "serverless-auto-swagger": "^2.8.2",
     "serverless-webpack": "^5.8.0",
