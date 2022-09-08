@@ -12,18 +12,34 @@ provider:
   stage: ${opt:stage, 'dev'}
   stackName: ${self:service}-${self:provider.stage}
   profile: personalAccount
+  environment:
+    PRODUCTS_TABLE_NAME: ${self:custom.productsTableName}
 
 plugins:
   - serverless-auto-swagger
   - serverless-webpack
+  - serverless-dynamodb-local
+  - serverless-offline
 
 custom:
+  productsTableName: products-table-${self:provider.stage}
   autoswagger:
     typefiles: ['./src/types/products.d.ts']
     apiType: 'http'
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+  dynamodb:
+    stages:
+      - dev
+    start:
+      migrate: true
+      seed: true
+    seed:
+      local:
+        sources:
+          - table: ${self:custom.productsTableName}
+            sources: [./offline/products.json]
 
 functions:
   getProductsList:
@@ -40,3 +56,20 @@ functions:
           path: /products/{productId}
           method: get
           cors: true
+
+resources:
+  Resources:
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.productsTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
