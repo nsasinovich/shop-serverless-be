@@ -5,3 +5,8 @@ export interface Product {
   description: string;
   imageUrl?: string;
 }
+
+export interface ProductProviderInterface {
+  getProductById: (id: string) => Promise<Product>;
+  getProducts: () => Promise<Product[]>;
+}
