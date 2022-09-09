@@ -42,5 +42,10 @@
     "webpack-node-externals": "^3.0.0"
   },
   "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@types/uuid": "^8.3.4",
+    "ajv": "^8.11.0",
+    "uuid": "^9.0.0"
+  }
 }
