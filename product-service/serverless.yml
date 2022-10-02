@@ -12,18 +12,44 @@ provider:
   stage: ${opt:stage, 'dev'}
   stackName: ${self:service}-${self:provider.stage}
   profile: personalAccount
+  environment:
+    PRODUCTS_TABLE_NAME: ${self:custom.productsTableName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+      Resource:
+            - { "Fn::GetAtt": ["ProductsTable", "Arn" ] }
 
 plugins:
   - serverless-auto-swagger
   - serverless-webpack
+  - serverless-dynamodb-local
+  - serverless-offline
 
 custom:
+  productsTableName: products-table-${self:provider.stage}
   autoswagger:
     typefiles: ['./src/types/products.d.ts']
     apiType: 'http'
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+  dynamodb:
+    stages:
+      - dev
+    start:
+      inMemory: true
+      migrate: true
+      seed: true
+    seed:
+      local:
+        sources:
+          - table: ${self:custom.productsTableName}
+            sources: [./offline/products.json]
 
 functions:
   getProductsList:
@@ -40,3 +66,39 @@ functions:
           path: /products/{productId}
           method: get
           cors: true
+  createProduct:
+    handler: handler.createProduct
+    events:
+      - http:
+          path: /products
+          method: post
+          cors: true
+
+resources:
+  Resources:
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.productsTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: count
+            AttributeType: N
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: CountIndex
+            KeySchema:
+              - AttributeName: count
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
