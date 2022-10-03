@@ -9,26 +9,39 @@ provider:
   stage: ${opt:stage, 'dev'}
   stackName: ${self:service}-${self:provider.stage}
   profile: personalAccount
+  environment:
+    BUCKET_NAME: ${self:custom.bucketName}
+    BUCKET_REGION: ${self:provider.region}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: s3:ListBucket
+          Resource:
+            - arn:aws:s3:::${self:custom.bucketName}
+        - Effect: Allow
+          Action: s3:*
+          Resource:
+            - arn:aws:s3:::${self:custom.bucketName}/*
+
 
 plugins:
   - serverless-webpack
   - serverless-offline
 
 custom:
+  bucketName: import-service-bucket-${self:provider.stage}
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
 
-# functions:
-#   getProductById:
-#     handler: handler.getProductById
-#     events:
-#       - http:
-#           path: /products/{productId}
-#           method: get
-#           cors: true
-
-# resources:
-#   Resources:
+functions:
+  importProductsFile:
+    handler: handler.importProductsFile
+    events:
+      - http:
+          path: /import
+          method: get
+          cors: true
 
 
