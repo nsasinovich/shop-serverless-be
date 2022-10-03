@@ -1,0 +1,34 @@
+service: import-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-central-1
+  stage: ${opt:stage, 'dev'}
+  stackName: ${self:service}-${self:provider.stage}
+  profile: personalAccount
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+# functions:
+#   getProductById:
+#     handler: handler.getProductById
+#     events:
+#       - http:
+#           path: /products/{productId}
+#           method: get
+#           cors: true
+
+# resources:
+#   Resources:
+
+
