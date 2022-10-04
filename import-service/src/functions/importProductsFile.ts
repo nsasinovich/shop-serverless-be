@@ -4,9 +4,10 @@ import { ImportServiceInterface } from '@/services/importService';
 
 import { HttpResponse } from '@/utils';
 import { StatusCode } from '@/consts';
+import { Product } from '@/types/products';
 
 export const importProductsFile =
-  (importService: ImportServiceInterface): APIGatewayProxyHandler =>
+  (importService: ImportServiceInterface<Product>): APIGatewayProxyHandler =>
   async (event: APIGatewayProxyEvent) => {
     console.log('Lambda invocation with event: ', JSON.stringify(event));
 
