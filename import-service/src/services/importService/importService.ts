@@ -1,11 +1,18 @@
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+  CopyObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 
 import ImportServiceInterface from './ImportServiceInterface';
 import { FileParserInterface } from '@/services/fileParserService';
 
 const UPLOADED_FOLDER_NAME = 'uploaded';
+const PARSED_FOLDER_NAME = 'parsed';
 const EXPIRATION_DEFAULT = 60;
 
 class ImportService<T> implements ImportServiceInterface<T> {
@@ -40,7 +47,45 @@ class ImportService<T> implements ImportServiceInterface<T> {
       return Promise.reject(`File not found: ${fileName}`);
     }
 
-    return this.fileParser.parseFileStream(fileStream);
+    const parsedFile = await this.fileParser.parseFileStream(fileStream);
+
+    try {
+      const targetFileName = fileName.replace(UPLOADED_FOLDER_NAME, PARSED_FOLDER_NAME);
+
+      await this.copyFile(fileName, targetFileName);
+      await this.deleteFile(fileName);
+    } catch (e) {
+      console.log('Failed to move file: ', fileName, e);
+    }
+
+    return parsedFile;
+  }
+
+  private async copyFile(fileName: string, targetFileName: string): Promise<void> {
+    const copyObjectParams = {
+      Bucket: this.bucketName,
+      CopySource: `${this.bucketName}/${fileName}`,
+      Key: targetFileName,
+    };
+
+    const command = new CopyObjectCommand(copyObjectParams);
+
+    await this.s3Client.send(command);
+
+    console.log(`File moved succesfully: ${fileName} -> ${targetFileName}`);
+  }
+
+  private async deleteFile(fileName: string): Promise<void> {
+    const deleteObjectParams = {
+      Bucket: this.bucketName,
+      Key: fileName,
+    };
+
+    const command = new DeleteObjectCommand(deleteObjectParams);
+
+    await this.s3Client.send(command);
+
+    console.log(`File deleted succesfully: ${fileName}`);
   }
 }
 
