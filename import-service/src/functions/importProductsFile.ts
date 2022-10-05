@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 import { ImportServiceInterface } from '@/services/importService';
 
@@ -7,8 +7,8 @@ import { StatusCode } from '@/consts';
 import { Product } from '@/types/products';
 
 export const importProductsFile =
-  (importService: ImportServiceInterface<Product>): APIGatewayProxyHandler =>
-  async (event: APIGatewayProxyEvent) => {
+  (importService: ImportServiceInterface<Product>) =>
+  async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     console.log('Lambda invocation with event: ', JSON.stringify(event));
 
     const { name: fileName } = event.queryStringParameters || {};
