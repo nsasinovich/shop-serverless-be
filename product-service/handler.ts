@@ -19,6 +19,7 @@ const dbClient = IS_OFFLINE
 
 const productProvider = new ProductProvider(dbClient, PRODUCTS_TABLE_NAME);
 
+export const catalogBatchProcess = handlers.catalogBatchProcess(productProvider);
 export const createProduct = handlers.createProduct(productProvider);
 export const getProductsList = handlers.getProductsList(productProvider);
 export const getProductById = handlers.getProductById(productProvider);

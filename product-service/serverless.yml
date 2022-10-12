@@ -14,15 +14,18 @@ provider:
   profile: personalAccount
   environment:
     PRODUCTS_TABLE_NAME: ${self:custom.productsTableName}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-      Resource:
-            - { "Fn::GetAtt": ["ProductsTable", "Arn" ] }
+    CATALOG_ITEMS_QUEUE_NAME: ${self:custom.catalogItemsQueueName}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+          Resource:
+                - { "Fn::GetAtt": ["ProductsTable", "Arn" ] }
 
 plugins:
   - serverless-auto-swagger
@@ -32,6 +35,7 @@ plugins:
 
 custom:
   productsTableName: products-table-${self:provider.stage}
+  catalogItemsQueueName: catalog-items-queue-${self:provider.stage}
   autoswagger:
     typefiles: ['./src/types/products.d.ts']
     apiType: 'http'
@@ -73,6 +77,16 @@ functions:
           path: /products
           method: post
           cors: true
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - CatalogItemsQueue
+              - Arn
+
 
 resources:
   Resources:
@@ -101,4 +115,8 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    CatalogItemsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.catalogItemsQueueName}
 
