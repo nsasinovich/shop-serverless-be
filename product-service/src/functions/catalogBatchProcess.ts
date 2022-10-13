@@ -4,7 +4,7 @@ import { SQSEvent, SQSHandler } from 'aws-lambda';
 export const catalogBatchProcess =
   (productProvider: ProductProviderInterface): SQSHandler =>
   async (event: SQSEvent) => {
-    console.log('Lambda invocation with test event: ', JSON.stringify(event));
+    console.log('Lambda invocation with event: ', JSON.stringify(event));
 
     const products: Product[] = event.Records.map((record) => JSON.parse(record.body) as Product);
 

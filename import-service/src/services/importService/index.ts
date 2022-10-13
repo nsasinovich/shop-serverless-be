@@ -1,2 +1,2 @@
-export { default as ImportServiceInterface } from './ImportServiceInterface';
+export { default as ImportServiceInterface } from './importServiceInterface';
 export { default as ImportService } from './importService';

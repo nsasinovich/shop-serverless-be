@@ -14,7 +14,6 @@ provider:
   profile: personalAccount
   environment:
     PRODUCTS_TABLE_NAME: ${self:custom.productsTableName}
-    CATALOG_ITEMS_QUEUE_NAME: ${self:custom.catalogItemsQueueName}
   iam:
     role:
       statements:
@@ -87,7 +86,6 @@ functions:
               - CatalogItemsQueue
               - Arn
 
-
 resources:
   Resources:
     ProductsTable:
@@ -119,4 +117,10 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.catalogItemsQueueName}
+  Outputs:
+    productsQueueUrl:
+      Value: !Ref CatalogItemsQueue
+    productsQueueArn:
+      Value: !GetAtt CatalogItemsQueue.Arn
+
 

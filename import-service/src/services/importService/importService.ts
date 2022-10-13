@@ -9,7 +9,8 @@ import {
 import { Readable } from 'stream';
 
 import ImportServiceInterface from './ImportServiceInterface';
-import { FileParserInterface } from '@/services/fileParserService';
+import { FileParserInterface, ValuesMapper } from '@/services/fileParserService';
+import { MessageServiceInterface } from '@/services/messageService';
 
 const UPLOADED_FOLDER_NAME = 'uploaded';
 const PARSED_FOLDER_NAME = 'parsed';
@@ -19,7 +20,8 @@ class ImportService<T> implements ImportServiceInterface<T> {
   constructor(
     private readonly bucketName: string,
     private readonly s3Client: S3Client,
-    private readonly fileParser: FileParserInterface<T>
+    private readonly fileParser: FileParserInterface<T>,
+    private readonly messageService: MessageServiceInterface<T>
   ) {}
 
   public createUploadUrl(fileName: string): Promise<string> {
@@ -47,7 +49,10 @@ class ImportService<T> implements ImportServiceInterface<T> {
       return Promise.reject(`File not found: ${fileName}`);
     }
 
-    const parsedFile = await this.fileParser.parseFileStream(fileStream);
+    const valuesMapper: ValuesMapper = ({ header, value }: { header: string; value: string }) =>
+      ['count', 'price'].includes(header) ? Number(value) : value;
+
+    const parsedFile = await this.fileParser.parseFileStream(fileStream, valuesMapper);
 
     try {
       const targetFileName = fileName.replace(UPLOADED_FOLDER_NAME, PARSED_FOLDER_NAME);
@@ -56,6 +61,12 @@ class ImportService<T> implements ImportServiceInterface<T> {
       await this.deleteFile(fileName);
     } catch (e) {
       console.log('Failed to move file: ', fileName, e);
+    }
+
+    try {
+      await this.messageService.sendMessages(parsedFile);
+    } catch (e) {
+      console.log('An error occured while sending the messages ', e);
     }
 
     return parsedFile;

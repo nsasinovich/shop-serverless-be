@@ -11,7 +11,8 @@ provider:
   profile: personalAccount
   environment:
     BUCKET_NAME: ${self:custom.bucketName}
-    BUCKET_REGION: ${self:provider.region}
+    SQS_URL: ${param:productsQueueUrl}
+    REGION: ${self:provider.region}
   iam:
     role:
       statements:
@@ -23,6 +24,10 @@ provider:
           Action: s3:*
           Resource:
             - arn:aws:s3:::${self:custom.bucketName}/*
+        - Effect: Allow
+          Action: sqs:*
+          Resource:
+            - ${param:productsQueueArn}
 
 
 plugins:
