@@ -9,3 +9,6 @@ swagger
 
 # Webpack directories
 .webpack
+
+# Configs
+emails.json

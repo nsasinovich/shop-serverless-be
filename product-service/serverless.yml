@@ -13,7 +13,9 @@ provider:
   stackName: ${self:service}-${self:provider.stage}
   profile: personalAccount
   environment:
+    REGION: ${self:provider.region}
     PRODUCTS_TABLE_NAME: ${self:custom.productsTableName}
+    PRODUCTS_SNS_ARN: !Ref CreateProductTopic
   iam:
     role:
       statements:
@@ -25,6 +27,10 @@ provider:
                 - dynamodb:PutItem
           Resource:
                 - { "Fn::GetAtt": ["ProductsTable", "Arn" ] }
+        - Effect: Allow
+          Action:
+            - sns:*
+          Resource: !Ref CreateProductTopic
 
 plugins:
   - serverless-auto-swagger
@@ -88,6 +94,16 @@ functions:
 
 resources:
   Resources:
+    CreateProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: CreateProductTopic
+    CreateProductSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: ${file(./emails.json):productSubscription}
+        TopicArn: !Ref CreateProductTopic
     ProductsTable:
       Type: AWS::DynamoDB::Table
       Properties:

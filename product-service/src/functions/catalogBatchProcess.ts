@@ -1,8 +1,12 @@
+import { NotificationServiceInterface } from '@/services/notificationService';
 import { Product, ProductProviderInterface } from '@/types/products';
 import { SQSEvent, SQSHandler } from 'aws-lambda';
 
 export const catalogBatchProcess =
-  (productProvider: ProductProviderInterface): SQSHandler =>
+  (
+    productProvider: ProductProviderInterface,
+    notificationService: NotificationServiceInterface
+  ): SQSHandler =>
   async (event: SQSEvent) => {
     console.log('Lambda invocation with event: ', JSON.stringify(event));
 
@@ -10,11 +14,27 @@ export const catalogBatchProcess =
 
     console.log('Products parsed: ', JSON.stringify(products));
 
-    try {
-      await Promise.all(products.map((product) => productProvider.createProduct(product)));
+    await Promise.all(
+      products.map(async (product) => {
+        const serialized = JSON.stringify(product);
 
-      console.log('Products created sucessfully!');
-    } catch (e) {
-      console.log('Error while creating the products:', e);
-    }
+        try {
+          await productProvider.createProduct(product);
+
+          console.log('Product created successfully: ', product.id);
+
+          await notificationService.publishMessage({
+            subject: 'Product added',
+            message: serialized,
+          });
+        } catch (e) {
+          console.log('Error while creating the product: ', product.id, e);
+
+          await notificationService.publishMessage({
+            subject: 'Failed to add product',
+            message: serialized,
+          });
+        }
+      })
+    );
   };

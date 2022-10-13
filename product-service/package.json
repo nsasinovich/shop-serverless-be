@@ -44,6 +44,7 @@
   "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-sns": "^3.186.0",
     "@types/uuid": "^8.3.4",
     "ajv": "^8.11.0",
     "uuid": "^9.0.0"

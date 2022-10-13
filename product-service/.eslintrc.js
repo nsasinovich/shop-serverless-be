@@ -19,7 +19,6 @@ module.exports = {
     'no-duplicate-imports': 'error',
     'comma-dangle': ['warn', 'always-multiline'],
     'prefer-const': 'warn',
-    semi: ['warn', 'always'],
     'no-multi-spaces': 'warn',
     'no-else-return': 'warn',
     'eol-last': ['warn', 'always'],

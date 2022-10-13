@@ -34,8 +34,8 @@ class ProductProvider implements ProductProviderInterface {
 
   async createProduct(productData: ProductData): Promise<Product> {
     const product: Product = {
-      ...productData,
       id: uuidv4(),
+      ...productData,
     };
 
     const params = {
