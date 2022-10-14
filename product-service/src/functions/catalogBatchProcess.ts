@@ -16,7 +16,7 @@ export const catalogBatchProcess =
 
     await Promise.all(
       products.map(async (product) => {
-        const serialized = JSON.stringify(product);
+        const serialized = JSON.stringify(product, null, 2);
 
         try {
           await productProvider.createProduct(product);
