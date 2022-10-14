@@ -26,6 +26,12 @@ export const catalogBatchProcess =
           await notificationService.publishMessage({
             subject: 'Product added',
             message: serialized,
+            attributes: {
+              count: {
+                DataType: 'Number',
+                StringValue: String(product.count),
+              },
+            },
           });
         } catch (e) {
           console.log('Error while creating the product: ', product.id, e);

@@ -104,6 +104,13 @@ resources:
         Protocol: email
         Endpoint: ${file(./emails.json):productSubscription}
         TopicArn: !Ref CreateProductTopic
+    LowInStockProductSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: ${file(./emails.json):lowInStockSubscription}
+        TopicArn: !Ref CreateProductTopic
+        FilterPolicy: '{"count":[{"numeric":["<",5]}]}'
     ProductsTable:
       Type: AWS::DynamoDB::Table
       Properties:

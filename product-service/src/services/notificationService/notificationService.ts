@@ -6,12 +6,13 @@ class NotificationService implements NotificationServiceInterface {
   constructor(private readonly snsArn: string, private readonly snsClient: SNSClient) {}
 
   async publishMessage(notification: Notification): Promise<void> {
-    const { message, subject } = notification;
+    const { message, subject, attributes } = notification;
 
     const command = new PublishCommand({
       Subject: subject,
-      Message: message,
       TopicArn: this.snsArn,
+      Message: message,
+      MessageAttributes: attributes,
     });
 
     try {
