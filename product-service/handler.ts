@@ -3,7 +3,7 @@ import { SNSClient } from '@aws-sdk/client-sns';
 
 import * as handlers from '@/functions';
 import { ProductProvider } from '@/providers/productProvider';
-import NotificationService from '@/services/notificationService/notificationService';
+import { NotificationService } from '@/services/notificationService';
 
 console.log(process.env);
 

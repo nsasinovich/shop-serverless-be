@@ -1,2 +1,2 @@
 export { default as NotificationServiceInterface } from './notificationServiceInterface';
-export { default as notificationService } from './notificationService';
+export { default as NotificationService } from './notificationService';

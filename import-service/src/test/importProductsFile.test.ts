@@ -5,8 +5,6 @@ import { importProductsFile as importProductsFileFactory } from '@/functions';
 import { ImportService } from '@/services/importService';
 import { Product } from '@/types/products';
 
-jest.mock('@/services/importService/importService');
-
 describe('#importProductsFile', () => {
   const importServiceMock = mock<ImportService<Product>>();
   const importProductsFile = importProductsFileFactory(importServiceMock);
