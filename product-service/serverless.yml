@@ -13,16 +13,24 @@ provider:
   stackName: ${self:service}-${self:provider.stage}
   profile: personalAccount
   environment:
+    REGION: ${self:provider.region}
     PRODUCTS_TABLE_NAME: ${self:custom.productsTableName}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-      Resource:
-            - { "Fn::GetAtt": ["ProductsTable", "Arn" ] }
+    PRODUCTS_SNS_ARN: !Ref CreateProductTopic
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+          Resource:
+                - { "Fn::GetAtt": ["ProductsTable", "Arn" ] }
+        - Effect: Allow
+          Action:
+            - sns:*
+          Resource: !Ref CreateProductTopic
 
 plugins:
   - serverless-auto-swagger
@@ -32,6 +40,7 @@ plugins:
 
 custom:
   productsTableName: products-table-${self:provider.stage}
+  catalogItemsQueueName: catalog-items-queue-${self:provider.stage}
   autoswagger:
     typefiles: ['./src/types/products.d.ts']
     apiType: 'http'
@@ -73,9 +82,35 @@ functions:
           path: /products
           method: post
           cors: true
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - CatalogItemsQueue
+              - Arn
 
 resources:
   Resources:
+    CreateProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: CreateProductTopic
+    CreateProductSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: ${file(./emails.json):productSubscription}
+        TopicArn: !Ref CreateProductTopic
+    LowInStockProductSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: ${file(./emails.json):lowInStockSubscription}
+        TopicArn: !Ref CreateProductTopic
+        FilterPolicy: '{"count":[{"numeric":["<",5]}]}'
     ProductsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -101,4 +136,14 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    CatalogItemsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.catalogItemsQueueName}
+  Outputs:
+    productsQueueUrl:
+      Value: !Ref CatalogItemsQueue
+    productsQueueArn:
+      Value: !GetAtt CatalogItemsQueue.Arn
+
 

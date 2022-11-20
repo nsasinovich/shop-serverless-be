@@ -15,9 +15,9 @@ export const importFileParser =
 
           console.log('Start file parsing: ', fileName);
 
-          const parsed: Product[] = await importService.parseUploadedFile(fileName);
+          await importService.parseUploadedFile(fileName);
 
-          console.log('File parsed successfully: ', JSON.stringify(parsed));
+          console.log('File parsed successfully!');
         })
       );
     } catch (e) {

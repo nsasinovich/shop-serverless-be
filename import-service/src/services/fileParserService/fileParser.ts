@@ -1,17 +1,21 @@
 import csv from 'csv-parser';
 import { Readable } from 'stream';
 
-import FileParserInterface from './FileParserInterface';
+import FileParserInterface, { ValuesMapper } from './FileParserInterface';
 
 class FileParser<T> implements FileParserInterface<T> {
-  public parseFileStream(fileStream: Readable): Promise<T[]> {
+  public parseFileStream(fileStream: Readable, valuesMapper?: ValuesMapper): Promise<T[]> {
     const parsedData: T[] = [];
 
     return new Promise((resolve, reject) => {
       fileStream
-        .pipe(csv())
+        .pipe(csv({ mapValues: valuesMapper }))
         .on('error', () => reject('Error while parsing the stream'))
-        .on('data', (item) => parsedData.push(item as T))
+        .on('data', (item) => {
+          console.log('Parsed file entry: ', item);
+
+          return parsedData.push(item as T);
+        })
         .on('end', () => resolve(parsedData));
     });
   }

@@ -1,3 +1,9 @@
 .vscode/*
 !.vscode/launch.json
+
+# package directories
+node_modules
 swagger
+
+# Serverless directories
+.serverless
