@@ -8,4 +8,7 @@ services:
       productsQueueUrl: ${product-service.productsQueueUrl}
       productsQueueArn: ${product-service.productsQueueArn}
 
+  authorization-service:
+    path: ./authorization-service
+
 

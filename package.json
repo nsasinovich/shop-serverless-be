@@ -9,7 +9,9 @@
     "deploy:dev:product-service": "sls product-service:deploy --stage dev",
     "deploy:prod:product-service": "sls product-service:deploy --stage prod",
     "deploy:dev:import-service": "sls import-service:deploy --stage dev",
-    "deploy:prod:import-service": "sls import-service:deploy --stage prod"
+    "deploy:prod:import-service": "sls import-service:deploy --stage prod",
+    "deploy:dev:authorization-service": "sls authorization-service:deploy --stage dev",
+    "deploy:prod:authorization-service": "sls authorization-service:deploy --stage prod"
   },
   "repository": {
     "type": "git",

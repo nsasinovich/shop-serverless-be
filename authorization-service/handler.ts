@@ -1,7 +1,10 @@
-// import * as handlers from '@/functions';
+import * as handlers from '@/functions';
+import { AuthorizationService } from '@/services/authorizationService';
+import { parseAllowedCredentials } from '@/utils';
 
-console.log('process.env: ', process.env);
+const { ALLOWED_CREDENTIALS } = process.env;
 
-// export const basicAuthorizer = handlers.importProductsFile(productImportService);
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export const basicAuthorizer = () => {};
+const allowedCredentials = parseAllowedCredentials(ALLOWED_CREDENTIALS);
+const authorizationService = new AuthorizationService(allowedCredentials);
+
+export const basicAuthorizer = handlers.basicAuthorizer(authorizationService);
