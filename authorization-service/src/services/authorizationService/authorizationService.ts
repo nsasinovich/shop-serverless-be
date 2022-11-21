@@ -6,6 +6,10 @@ class AuthorizationService implements AuthorizationServiceInterface {
   validateToken(token: string): boolean {
     const [username, password] = this.decodeCredentials(token);
 
+    if (!username || !password) {
+      return false;
+    }
+
     return this.allowedCredentials[username] === password;
   }
 

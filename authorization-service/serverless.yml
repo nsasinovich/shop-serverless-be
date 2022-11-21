@@ -24,3 +24,8 @@ functions:
   basicAuthorizer:
     handler: handler.basicAuthorizer
 
+resources:
+  Outputs:
+    tokenAuthorizerArn:
+      Value:
+        Fn::GetAtt: BasicAuthorizerLambdaFunction.Arn

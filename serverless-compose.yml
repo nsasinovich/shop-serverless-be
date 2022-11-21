@@ -10,7 +10,7 @@ services:
     params:
       productsQueueUrl: ${product-service.productsQueueUrl}
       productsQueueArn: ${product-service.productsQueueArn}
-      tokenAuthorizerArn: ${authorization-service.BasicAuthorizerLambdaFunctionQualifiedArn}
+      tokenAuthorizerArn: ${authorization-service.tokenAuthorizerArn}
 
 
 

@@ -61,5 +61,3 @@ functions:
             - prefix: uploaded/
             - suffix: .csv
           existing: true
-
-
