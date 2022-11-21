@@ -25,6 +25,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.7.1",
     "serverless": "^3.15.0",
+    "serverless-dotenv-plugin": "^4.0.2",
     "serverless-offline": "^11.0.1",
     "serverless-webpack": "^5.10.0",
     "ts-loader": "^9.4.1",
