@@ -48,6 +48,9 @@ functions:
           path: /import
           method: get
           cors: true
+          authorizer:
+            type: token
+            arn: ${param:tokenAuthorizerArn}
   importFileParser:
     handler: handler.importFileParser
     events:
